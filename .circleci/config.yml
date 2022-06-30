@@ -1,0 +1,98 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@1.1.2
+  heroku: circleci/heroku@1.2.3
+
+jobs:
+  build:
+    docker:
+      -  image: circleci/ruby:3.1.2
+    workinng_directory: ~/Clean_APP/src
+    steps:
+      -  checkout:
+           path: ~/Clean_APP
+      -  ruby/install-deps
+
+  rspec:
+    working_directory: ~/Clean_APP/src
+    docker:
+      - image: circleci/ruby
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Setup environment variable
+          command: |
+            echo "export COMPOSE_FILE=docker-compose.ci.yml" >> $BASH_ENV
+      - run:
+          name: Start containers and verify it is working
+          command: |
+            set -x
+            docker-compose up -d
+            docker exec clean_app curl -4 --retry 10 --retry-delay 3 --retry-connrefused http://localhost:3000
+      - run:
+          name: Setup database
+          command: |
+            docker-compose exec web bash -c 'yes n | bundle exec rails g spree:install --migrate --seed --sample --auto_accept'
+      - run:
+          name: Run rspec
+          command: docker-compose exec web rspec
+
+  rubocop:
+    working_directory: ~/potepanec
+    docker:
+      - image: circleci/ruby:2.7.3
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gemfiles-{{ .Branch }}-
+            - gemfiles-master-
+      - run: bundle config --local path vendor/bundle
+      - run:
+          name: bundle install
+          command: bundle check || bundle install --jobs=8 --clean
+      - run:
+          name: Run rubocop
+          command: bundle exec rubocop --parallel
+      - save_cache:
+          key: gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+  heroku_deploy:
+    docker:
+      - image: circleci/ruby:3.1.2
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+      - heroku/install
+      - run:
+          name: heroku login
+          command: heroku container:login
+      - run:
+          name: push docker image
+          run: heroku container:push web -a $HEROKU_APP_NAME
+      - run:
+          name: release docker image
+          run: heroku container:release web -a $HEROKU_APP_NAME
+      - run:
+          name: database setup
+          run: heroku run bundle exec rake db:migrate RAILS_ENV=production -a $HEROKU_APP_NAME
+
+
+workflows:
+  version: 2.1
+  buildgit:
+    jobs:
+      - rspec
+      - rubocop
+      - heroku_deploy:
+          requires:
+            - rspec
+            - rubocop
+          filters:
+            branches:
+              only: main
