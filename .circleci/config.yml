@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       -  image: circleci/ruby:3.1.2
-    workinng_directory: ~/Clean_APP/src
+    working_directory: ~/Clean_APP/src
     steps:
       -  checkout:
            path: ~/Clean_APP
