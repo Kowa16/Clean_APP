@@ -26,7 +26,9 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: test_db
+  database: app_test
+  host: <%= ENV.fetch("APP_DATE_BASE") { "db" } %>
+
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is

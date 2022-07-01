@@ -7,7 +7,8 @@ jobs:
   build:
     docker:
       -  image: circleci/ruby:3.1.2
-    workinng_directory: ~/Clean_APP/src
+
+    working_directory: ~/Clean_APP/src
     steps:
       -  checkout:
            path: ~/Clean_APP
@@ -16,7 +17,9 @@ jobs:
   rspec:
     working_directory: ~/Clean_APP/src
     docker:
-      - image: circleci/ruby
+
+      - image: circleci/ruby:3.1.2
+
     steps:
       - checkout
       - setup_remote_docker
@@ -30,18 +33,19 @@ jobs:
             set -x
             docker-compose up -d
             docker exec clean_app curl -4 --retry 10 --retry-delay 3 --retry-connrefused http://localhost:3000
-      - run:
-          name: Setup database
-          command: |
-            docker-compose exec web bash -c 'yes n | bundle exec rails g spree:install --migrate --seed --sample --auto_accept'
+      # - run:
+      #     name: Setup database
+      #     command: |
+      #       docker-compose exec web bash -c 'yes n | bundle exec rails g spree:install --migrate --seed --sample --auto_accept'
+
       - run:
           name: Run rspec
           command: docker-compose exec web rspec
 
   rubocop:
-    working_directory: ~/potepanec
+    working_directory: ~/Clean_APP/src
     docker:
-      - image: circleci/ruby:2.7.3
+      - image: circleci/ruby:3.1.2
     steps:
       - checkout
       - restore_cache:
@@ -74,18 +78,18 @@ jobs:
           command: heroku container:login
       - run:
           name: push docker image
-          run: heroku container:push web -a $HEROKU_APP_NAME
+          command: heroku container:push web -a $HEROKU_APP_NAME
       - run:
           name: release docker image
-          run: heroku container:release web -a $HEROKU_APP_NAME
+          command: heroku container:release web -a $HEROKU_APP_NAME
       - run:
           name: database setup
-          run: heroku run bundle exec rake db:migrate RAILS_ENV=production -a $HEROKU_APP_NAME
-
+          command: heroku run bundle exec rake db:migrate RAILS_ENV=production -a $HEROKU_APP_NAME
 
 workflows:
   version: 2.1
-  buildgit:
+  build:
+
     jobs:
       - rspec
       - rubocop
