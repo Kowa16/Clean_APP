@@ -16,7 +16,7 @@ jobs:
   rspec:
     working_directory: ~/Clean_APP/src
     docker:
-      - image: circleci/ruby
+      - image: circleci/ruby:3.1.2
     steps:
       - checkout
       - setup_remote_docker
@@ -39,9 +39,9 @@ jobs:
           command: docker-compose exec web rspec
 
   rubocop:
-    working_directory: ~/potepanec
+    working_directory: ~/Clean_APP/src
     docker:
-      - image: circleci/ruby:2.7.3
+      - image: circleci/ruby:3.1.2
     steps:
       - checkout
       - restore_cache:
@@ -74,18 +74,17 @@ jobs:
           command: heroku container:login
       - run:
           name: push docker image
-          run: heroku container:push web -a $HEROKU_APP_NAME
+          command: heroku container:push web -a $HEROKU_APP_NAME
       - run:
           name: release docker image
-          run: heroku container:release web -a $HEROKU_APP_NAME
+          command: heroku container:release web -a $HEROKU_APP_NAME
       - run:
           name: database setup
-          run: heroku run bundle exec rake db:migrate RAILS_ENV=production -a $HEROKU_APP_NAME
-
+          command: heroku run bundle exec rake db:migrate RAILS_ENV=production -a $HEROKU_APP_NAME
 
 workflows:
   version: 2.1
-  buildgit:
+  build:
     jobs:
       - rspec
       - rubocop
