@@ -30,10 +30,10 @@ jobs:
             set -x
             docker-compose up -d
             docker exec clean_app curl -4 --retry 10 --retry-delay 3 --retry-connrefused http://localhost:3000
-      - run:
-          name: Setup database
-          command: |
-            docker-compose exec web bash -c 'yes n | bundle exec rails g spree:install --migrate --seed --sample --auto_accept'
+      # - run:
+      #     name: Setup database
+      #     command: |
+      #       docker-compose exec web bash -c 'yes n | bundle exec rails g spree:install --migrate --seed --sample --auto_accept'
       - run:
           name: Run rspec
           command: docker-compose exec web rspec
