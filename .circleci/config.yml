@@ -7,6 +7,7 @@ jobs:
   build:
     docker:
       -  image: circleci/ruby:3.1.2
+
     working_directory: ~/Clean_APP/src
     steps:
       -  checkout:
@@ -16,7 +17,9 @@ jobs:
   rspec:
     working_directory: ~/Clean_APP/src
     docker:
+
       - image: circleci/ruby:3.1.2
+
     steps:
       - checkout
       - setup_remote_docker
@@ -34,6 +37,7 @@ jobs:
       #     name: Setup database
       #     command: |
       #       docker-compose exec web bash -c 'yes n | bundle exec rails g spree:install --migrate --seed --sample --auto_accept'
+
       - run:
           name: Run rspec
           command: docker-compose exec web rspec
@@ -85,6 +89,7 @@ jobs:
 workflows:
   version: 2.1
   build:
+
     jobs:
       - rspec
       - rubocop
