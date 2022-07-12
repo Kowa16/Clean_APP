@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
   devise_for :users
-  get 'houses/show'
+  get 'houses/index'
   get '/', to: 'users#index'
 end
