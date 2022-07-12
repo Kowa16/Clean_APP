@@ -1,0 +1,48 @@
+<div class="top-bar">
+  <div class="logo">
+    <%= image_tag 'sample.png', :size => '100x55' %>
+  </div>
+</div>
+<div class="main-area">
+  <div class="main-left-box">
+    <div class="introduction">
+      <div class="main-hedind-L1">
+        クリーンアップで家を綺麗に保つことをお手伝いします
+      </div>
+    </div>
+    <div class="how-to-use">
+      <div class="main-hedind-L2">
+        使い方
+      </div>
+      <div class="main-text-L2">
+        簡単な動画を埋め込みながら説明文を加える予定
+      </div>
+    </div>
+
+  </div>
+  <div class="main-right-box">
+    <div class="login">
+      <h3>ログイン</h3>
+        <%= form_with model: @user, url: user_session_path, local: true do |f| %>
+      <div class="sign-field">
+        <%= f.label :ユーザーネーム %><br />
+        <%= f.email_field :name, autofocus: true, autocomplete: "name" %>
+      </div>
+      <div class="sign-field">
+        <%= f.label :パスワード %><br />
+        <%= f.password_field :password, autocomplete: "current-password" %>
+      </div>
+      <% if devise_mapping.rememberable? %>
+      <div class="sign-field">
+        <%= f.check_box :remember_me %>
+        <%= f.label :remember_me %>
+      </div>
+      <% end %>
+      <div class="actions">
+        <%= f.submit "ログイン" %>
+      </div>
+      <% end %>
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>
