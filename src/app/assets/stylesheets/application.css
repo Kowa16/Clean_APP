@@ -21,11 +21,16 @@ body {
 
  .top-bar {
    display: flex;
+   align-items: flex-end;
+   width: 100%;
    background-color: #ccc;
  }
 
 .logo{
+  display: block;
   height: 55px;
+  width: 110px;
+  margin-right: auto;
 }
 
 .main-area{
@@ -74,4 +79,80 @@ body {
 
 .sign-field{
 
+}
+
+
+.top-navigation{
+
+}
+
+.top-navigation-group{
+  margin: 0;
+}
+
+.top-navigation-item{
+  list-style: none;
+  display: inline-block;
+  font-size: 20px;
+}
+
+.main-area{
+  background-color: #ddd;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.house-area{
+  width: 85%;
+  height: 400px;
+  position: relative;
+  background-color: #aaa;
+  margin: 0 auto;
+  margin-top: 30px;
+  border: 2px solid;
+  border-color: #eee;
+}
+
+.house-name{
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  height: auto;
+  width: fit-content;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #bbb;
+  border: 2px solid;
+  border-color: #eee;
+  font-size: 25px;
+}
+
+.registration-request{
+  height: auto;
+  width: 200px;
+  background-color: #bbb;
+  font-size: 30px;
+}
+
+.house-place{
+  position: absolute;
+  top: 40px;
+  left: 20px;
+  display: block;
+  border: 2px solid;
+  border-color: #eee;
+  width: fit-content;
+}
+
+.house-place-image{
+  margin: 8px;
+}
+
+.house-place-cleanliness{
+  margin-left: 8px;
+}
+
+.house-place-date{
+  margin-left: 8px;
 }
